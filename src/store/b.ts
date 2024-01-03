@@ -2,16 +2,16 @@ import { makeAutoObservable } from 'mobx';
 import { RootStore } from '.';
 
 interface StateB {
-  b: number;
+  count: number;
 }
 
 export class B {
   setLoading: (value: boolean, key?: string) => void;
   updateState: (data: Partial<StateB>) => void;
   state: StateB = {
-    b: 0,
+    count: 0,
   };
-  ib: () => void;
+  iCount: () => void;
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -24,9 +24,14 @@ export class B {
       this.state = { ...this.state, ...data };
     };
 
-    this.ib = () => {
-      this.updateState({ b: this.state.b + 1 });
+    this.iCount = () => {
+      this.updateState({ count: this.state.count + 1 });
     };
+  }
+
+  get total() {
+    console.log('Computing...');
+    return this.state.count + 1;
   }
 
   async fb1Async() {
@@ -38,6 +43,6 @@ export class B {
     });
     this.setLoading(false);
 
-    this.ib();
+    this.iCount();
   }
 }

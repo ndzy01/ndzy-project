@@ -1,11 +1,7 @@
-import { createContext } from 'react';
 import { makeAutoObservable } from 'mobx';
 import { Demo } from './demo';
 import { B } from './b';
-
-interface ContextProps {
-  state: RootStore;
-}
+import { setupStores } from './setupStores';
 
 export class RootStore {
   loading: {
@@ -13,10 +9,12 @@ export class RootStore {
   } = { loading: false };
   setLoading: (value: boolean, key: string) => void;
   demo: Demo;
+  // 定义 store
   b: B;
 
   constructor() {
     this.demo = new Demo(this);
+    // 实例化
     this.b = new B(this);
 
     makeAutoObservable(this);
@@ -27,6 +25,4 @@ export class RootStore {
   }
 }
 
-export const rootStore = new RootStore();
-
-export const StoreContext = createContext<ContextProps>({ state: rootStore });
+export const { StoreContext, useStores, withStores } = setupStores<RootStore>(RootStore);

@@ -32,6 +32,12 @@ export class Demo {
     };
   }
 
+  // 计算属性
+  get total() {
+    console.log('Computing...');
+    return this.state.count + 1;
+  }
+
   async fAsync() {
     this.setLoading(true);
     // TODO-n

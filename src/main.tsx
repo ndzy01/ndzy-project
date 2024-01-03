@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './App.tsx';
+import { BrowserRouter } from 'react-router-dom';
+import { Layout } from './Layout.tsx';
 import './index.css';
-import { StoreContext, rootStore } from './store/index.ts';
+import { withStores } from './store';
+
+const EnhancedComponent = withStores(Layout);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <StoreContext.Provider value={{ state: rootStore }}>
-      <App />
-    </StoreContext.Provider>
-  </React.StrictMode>,
+  <BrowserRouter>
+    <React.StrictMode>
+      <EnhancedComponent />
+    </React.StrictMode>
+  </BrowserRouter>,
 );
