@@ -1,49 +1,183 @@
-import { PageContainer, ProCard } from '@ant-design/pro-components';
-import { Button } from 'antd';
+import { PageContainer, ProCard, ProList } from '@ant-design/pro-components';
+import { Button, Space, Tag } from 'antd';
 import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router-dom';
+import { serviceAxios, decrypt } from '../../utils';
 import { useStores } from '../../store';
+import { useEffect, useRef } from 'react';
 
-export const TODOList: React.FC<Record<string, unknown>> = observer(() => {
+export const TodoList: React.FC<Record<string, unknown>> = observer(() => {
+  const actionRef: any = useRef();
+  const navigate = useNavigate();
   const {
-    loading,
-    b: {
-      state: { count },
-      total,
-      iCount,
-      fb1Async,
+    todo: {
+      state: { tags },
+      updateState,
+      queryTagList,
+      delTodo,
+      finishTodo,
+      recoverTodo,
     },
   } = useStores();
 
+  useEffect(() => {
+    queryTagList();
+  }, []);
+
+  const toolBarRender: any = () => {
+    return (
+      <Button
+        type="primary"
+        onClick={() => {
+          updateState({ todoInfo: {} });
+          navigate('/todo/edit');
+        }}
+      >
+        新增
+      </Button>
+    );
+  };
+
+  const metas: any = {
+    title: {
+      dataIndex: 'name',
+      title: 'name',
+      search: false,
+    },
+    content: {
+      render: (_dom: any, entity: any) => {
+        return (
+          <Space size={0}>
+            <Tag>{entity.userName}</Tag>
+            <Tag>{entity.tagName}</Tag>
+            <Tag color="red">{entity.deadline}</Tag>
+            <Tag color={entity.isFinish === '0' ? 'skyblue' : 'green'}>
+              {entity.isFinish === '0' ? '处理中' : '已完成'}
+            </Tag>
+          </Space>
+        );
+      },
+      search: false,
+    },
+    actions: {
+      render: (_text: any, row: any) => [
+        <a
+          href={row.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          key="view"
+          onClick={() => {
+            updateState({ todoInfo: row });
+            navigate('/todo/view');
+          }}
+        >
+          查看
+        </a>,
+        Number(row.isFinish) === 0 && (
+          <a
+            href={row.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            key="edit"
+            onClick={() => {
+              updateState({ todoInfo: row });
+              navigate('/todo/edit');
+            }}
+          >
+            编辑
+          </a>
+        ),
+        Number(row.isFinish) === 0 && (
+          <a
+            href={row.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            key="finish"
+            onClick={() => {
+              finishTodo(row).then(() => {
+                actionRef.current?.reload();
+              });
+            }}
+          >
+            完成
+          </a>
+        ),
+        Number(row.isFinish) === 1 && (
+          <a
+            href={row.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            key="recover"
+            onClick={() => {
+              recoverTodo(row).then(() => {
+                actionRef.current?.reload();
+              });
+            }}
+          >
+            恢复
+          </a>
+        ),
+        Number(row.isFinish) === 1 && (
+          <a
+            href={row.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            key="findelish"
+            onClick={() => {
+              delTodo(row).then(() => {
+                actionRef.current?.reload();
+              });
+            }}
+          >
+            删除
+          </a>
+        ),
+      ],
+      search: false,
+    },
+    tagId: {
+      title: '标签',
+      valueType: 'select',
+      valueEnum: tags.reduce((accumulator, { id, name }) => {
+        accumulator[id] = name;
+        return accumulator;
+      }, {}),
+    },
+    isFinish: {
+      title: '状态',
+      valueType: 'select',
+      valueEnum: { 0: '处理中', 1: '已完成' },
+    },
+    operationSource: {
+      title: '来源',
+      valueType: 'select',
+      valueEnum: { h5: 'pc' },
+    },
+  };
+
   return (
-    <PageContainer
-      extra={[
-        <Button key="3">操作</Button>,
-        <Button key="2">操作</Button>,
-        <Button key="1" type="primary">
-          主操作
-        </Button>,
-      ]}
-      subTitle="简单的描述"
-      footer={[
-        <Button key="3">重置</Button>,
-        <Button key="2" type="primary">
-          提交
-        </Button>,
-      ]}
-    >
+    <PageContainer>
       <ProCard
         style={{
-          height: '200vh',
           minHeight: 800,
         }}
       >
-        <div style={{ color: loading.b ? 'red' : '' }}>
-          {total}
-          <div> 计数: {count}</div>
-          <button onClick={iCount}>同步</button>
-          &nbsp;&nbsp;&nbsp;&nbsp;
-          <button onClick={fb1Async}>异步</button>
-        </div>
+        <ProList<any>
+          actionRef={actionRef}
+          toolBarRender={toolBarRender}
+          search={{}}
+          rowKey="id"
+          request={async (params = {} as Record<string, any>) => {
+            const data = await serviceAxios.get('/todos', { params: { ...params } });
+            data.data = data.data.map((item: any) => ({
+              ...item,
+              detail: decrypt(item.detail, item.keyBase, item.ivBase),
+            }));
+            return data;
+          }}
+          showActions="hover"
+          metas={metas}
+        />
       </ProCard>
     </PageContainer>
   );

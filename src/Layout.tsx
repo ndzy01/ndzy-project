@@ -73,12 +73,13 @@ export const Layout: React.FC<Record<string, unknown>> = observer(() => {
       menu={{
         collapsedShowGroupTitle: true,
       }}
+      title="ndzy"
       logo="https://cdn.jsdelivr.net/gh/ndzy01/img/ndzy.png"
       avatarProps={{
         src: 'https://cdn.jsdelivr.net/gh/ndzy01/img/ndzy.png',
         size: 'small',
         title: 'ndzy',
-        render: (props, dom) => {
+        render: (_props, dom) => {
           return (
             <Dropdown
               menu={{

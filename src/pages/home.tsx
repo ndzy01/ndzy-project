@@ -33,7 +33,6 @@ export const Home: React.FC<Record<string, unknown>> = observer(() => {
     >
       <ProCard
         style={{
-          height: '200vh',
           minHeight: 800,
         }}
       >

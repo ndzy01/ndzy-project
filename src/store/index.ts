@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { Demo } from './demo';
 import { B } from './b';
 import { setupStores } from './setupStores';
+import { Todo } from './todo';
 
 export class RootStore {
   loading: {
@@ -11,11 +12,13 @@ export class RootStore {
   demo: Demo;
   // 定义 store
   b: B;
+  todo: Todo;
 
   constructor() {
     this.demo = new Demo(this);
     // 实例化
     this.b = new B(this);
+    this.todo = new Todo(this);
 
     makeAutoObservable(this);
 
