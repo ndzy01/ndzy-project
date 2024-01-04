@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ProLayout } from '@ant-design/pro-components';
 import { Dropdown } from 'antd';
 import { observer } from 'mobx-react-lite';
 import { routes } from './routes';
-import { Routes, Route, Link, useLocation, Outlet } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 
 interface IRouter {
   path: string;
@@ -11,6 +11,18 @@ interface IRouter {
   component: any;
   routes?: IRouter[];
 }
+
+interface Item {
+  [k: string]: any;
+  children: Item[];
+}
+
+const findLastItem = (data: Item): Item => {
+  if (data.children && data.children.length > 0) {
+    return findLastItem(data.children[0]);
+  }
+  return data;
+};
 
 const loop = (router: IRouter[]) => {
   return router.map((item) => {
@@ -27,7 +39,13 @@ const loop = (router: IRouter[]) => {
 };
 
 export const Layout: React.FC<Record<string, unknown>> = observer(() => {
+  const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    console.log('当前路由:', location.pathname);
+    // 执行其他操作
+  }, [location]);
 
   return (
     <ProLayout
@@ -52,6 +70,15 @@ export const Layout: React.FC<Record<string, unknown>> = observer(() => {
           width: '331px',
         },
       ]}
+      breadcrumbRender={(routers: any = []) => {
+        const r = routers;
+
+        if (r.length > 0) {
+          r[0].linkPath = r[r.length - 1].linkPath;
+        }
+
+        return r;
+      }}
       route={{
         path: '/',
         ...routes,
@@ -60,8 +87,18 @@ export const Layout: React.FC<Record<string, unknown>> = observer(() => {
       menuItemRender={(item: any, defaultDom: any) => {
         return <Link to={item.path}> {defaultDom} </Link>;
       }}
-      subMenuItemRender={(_item: any, defaultDom: any) => {
-        return defaultDom;
+      subMenuItemRender={(item: any, defaultDom: any) => {
+        return (
+          <div
+            onClick={() => {
+              if (item.children && item.children.length > 0) {
+                navigate(findLastItem(item).path);
+              }
+            }}
+          >
+            {defaultDom}
+          </div>
+        );
       }}
       appList={[]}
       token={{

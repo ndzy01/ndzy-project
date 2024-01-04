@@ -55,13 +55,25 @@ export const routes = {
       routes: [
         {
           path: '/t/t1',
-          name: '测试',
+          name: '测试1',
           component: <div>t1</div>,
           routes: [
             {
               path: '/t/t1/t11',
               name: 't11',
               component: <T />,
+            },
+          ],
+        },
+        {
+          path: '/t/t2',
+          name: '测试2',
+          component: <div>t2</div>,
+          routes: [
+            {
+              path: '/t/t2/t22',
+              name: 't22',
+              component: 't22',
             },
           ],
         },
