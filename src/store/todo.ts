@@ -43,7 +43,14 @@ export class Todo {
   async createTodo(params: Record<string, any> = {}) {
     const { text, keyBase, ivBase } = encrypt(params.detail);
     this.setLoading(true);
-    await serviceAxios.post('/todos', { ...params, operationSource: 'h5', detail: text, keyBase, ivBase });
+    await serviceAxios.post('/todos', {
+      ...params,
+      deadline: dayjs(params.deadline).format('YYYY-MM-DD'),
+      operationSource: 'h5',
+      detail: text,
+      keyBase,
+      ivBase,
+    });
     this.setLoading(false);
   }
 

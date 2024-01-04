@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { Button, Input, Space, Tag } from 'antd';
+import { Input, Space, Tag, message } from 'antd';
 import { PageContainer, ProCard, ProList } from '@ant-design/pro-components';
 import { useStores } from '../store';
 import { useRef, useState } from 'react';
@@ -20,9 +20,12 @@ export const TagList = observer(() => {
           setTagName(e.target.value);
         }}
         addonAfter={
-          <Button
-            type="primary"
+          <span
             onClick={() => {
+              if (!tagName) {
+                return message.error({ content: '标签名称不能为空' });
+              }
+
               createTag({ name: tagName }).then(() => {
                 setTagName('');
                 actionRef.current?.reload();
@@ -30,7 +33,7 @@ export const TagList = observer(() => {
             }}
           >
             新增
-          </Button>
+          </span>
         }
       />
     );

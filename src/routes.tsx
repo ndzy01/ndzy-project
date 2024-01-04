@@ -1,4 +1,5 @@
 import { Home } from './pages/home';
+import { T } from './pages/t';
 import { TagList } from './pages/tag';
 import { TodoList } from './pages/todo';
 import { EditTodo } from './pages/todo/editTodo';
@@ -60,7 +61,7 @@ export const routes = {
             {
               path: '/t/t1/t11',
               name: 't11',
-              component: <div>t11</div>,
+              component: <T />,
             },
           ],
         },

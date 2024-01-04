@@ -44,15 +44,15 @@ export const TodoList: React.FC<Record<string, unknown>> = observer(() => {
       title: 'name',
       search: false,
     },
-    content: {
+    description: {
       render: (_dom: any, entity: any) => {
         return (
           <Space size={0}>
             <Tag>{entity.userName}</Tag>
             <Tag>{entity.tagName}</Tag>
-            <Tag color="red">{entity.deadline}</Tag>
-            <Tag color={entity.isFinish === '0' ? 'skyblue' : 'green'}>
-              {entity.isFinish === '0' ? '处理中' : '已完成'}
+            <Tag color="warning">{entity.deadline}</Tag>
+            <Tag color={String(entity.isFinish) === '0' ? 'error' : 'success'}>
+              {String(entity.isFinish) === '0' ? '处理中' : '已完成'}
             </Tag>
           </Space>
         );
