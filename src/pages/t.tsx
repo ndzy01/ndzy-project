@@ -46,11 +46,7 @@ export const T = observer(() => {
   const {
     todo: {
       state: { tags },
-      updateState,
       queryTagList,
-      delTodo,
-      finishTodo,
-      recoverTodo,
     },
   } = useStores();
   const actionRef = useRef<ActionType>();
@@ -161,7 +157,7 @@ export const T = observer(() => {
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (params, sort, filter) => {
+      request={async (params) => {
         const data = await serviceAxios.get('/todos', { params: { ...params } });
         data.data = data.data.map((item: any) => ({
           ...item,
