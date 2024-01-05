@@ -1,0 +1,1 @@
+import{r as t}from"./vendor_react-xEkgX5Pu.js";import"./vendor_lodash-X0Gv3BLA.js";import"./vendor_dayjs-HuelVE4u.js";import"./vendor_resize-observer-polyfill-B32NGzNS.js";var e=function(o){t.useEffect(function(){o==null||o()},[])};export{e as u};
